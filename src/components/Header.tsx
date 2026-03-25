@@ -45,7 +45,7 @@ const Header: React.FC = () => {
               Settings
             </button>
             <button 
-              onClick={logout}
+              onClick={() => logout()}
               className="w-full flex items-center gap-2 px-4 py-2 text-sm text-destructive hover:bg-destructive/10 transition-colors text-left"
             >
               <LogOut size={16} />

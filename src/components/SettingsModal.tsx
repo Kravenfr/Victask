@@ -1,5 +1,5 @@
 import React from 'react';
-import { X, LogOut, Settings, Github, Moon } from 'lucide-react';
+import { X, LogOut, Github, Moon } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 
 interface SettingsModalProps {
@@ -81,7 +81,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
           {/* Danger Zone */}
           <div className="pt-4">
             <button 
-              onClick={logout}
+              onClick={() => logout()}
               className="w-full flex items-center justify-center gap-2 py-3 border border-destructive/30 text-destructive hover:bg-destructive/5 rounded-2xl font-semibold transition-all"
             >
               <LogOut size={18} />

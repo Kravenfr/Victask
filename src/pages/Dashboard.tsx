@@ -9,7 +9,6 @@ import { useTasks, useTaskMutations, useLists } from '../hooks/useTasks';
 import TaskItem from '../components/TaskItem';
 import { ChevronDown, ChevronRight, Star, MoreVertical } from 'lucide-react';
 import type { Task } from '../types';
-import { cn } from '../lib/utils';
 
 import {
   DndContext, 
@@ -223,7 +222,7 @@ const Dashboard: React.FC = () => {
           <TaskDetail 
             task={selectedTask}
             lists={lists}
-            onUpdate={updateTask}
+            onUpdate={(id, updates) => updateTask({ id, ...updates })}
             onDelete={deleteTask}
             onClose={() => setSelectedTask(null)}
           />
