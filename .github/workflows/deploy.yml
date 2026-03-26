@@ -28,6 +28,18 @@ jobs:
 
       - name: 🏗️ Build Application
         run: npm run build
+        env:
+          VITE_ASGARDEO_CLIENT_ID: ${{ secrets.VITE_ASGARDEO_CLIENT_ID }}
+          VITE_ASGARDEO_BASE_URL: ${{ secrets.VITE_ASGARDEO_BASE_URL }}
+          VITE_ASGARDEO_REDIRECT_URL: "https://kravenfr.github.io/Victask/"
+          
+          VITE_FIREBASE_API_KEY: ${{ secrets.VITE_FIREBASE_API_KEY }}
+          VITE_FIREBASE_AUTH_DOMAIN: ${{ secrets.VITE_FIREBASE_AUTH_DOMAIN }}
+          VITE_FIREBASE_PROJECT_ID: ${{ secrets.VITE_FIREBASE_PROJECT_ID }}
+          VITE_FIREBASE_STORAGE_BUCKET: ${{ secrets.VITE_FIREBASE_STORAGE_BUCKET }}
+          VITE_FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.VITE_FIREBASE_MESSAGING_SENDER_ID }}
+          VITE_FIREBASE_APP_ID: ${{ secrets.VITE_FIREBASE_APP_ID }}
+          CI: false
 
       - name: 🚀 Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
