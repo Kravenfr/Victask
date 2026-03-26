@@ -6,10 +6,14 @@ interface AsgardeoProviderProps {
 }
 
 const AsgardeoProvider: React.FC<AsgardeoProviderProps> = ({ children }) => {
-    const clientID = import.meta.env.VITE_ASGARDEO_CLIENT_ID;
-    const baseUrl = import.meta.env.VITE_ASGARDEO_BASE_URL;
+    // Fallback to hardcoded public IDs to ensure GitHub Pages robustness
+    const clientID = "Z2km1fq9TGTrTAfHMOZ1omh1C44a";
+    const baseUrl = "https://api.asgardeo.io/t/victask";
 
-    const redirectURL = window.location.origin + import.meta.env.BASE_URL;
+    const isLocal = window.location.hostname === 'localhost';
+    const redirectURL = isLocal 
+        ? "http://localhost:5173/Victask/" 
+        : "https://kravenfr.github.io/Victask/";
 
     return (
         <AuthProvider
