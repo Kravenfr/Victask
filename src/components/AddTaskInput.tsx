@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { useUIStore } from '../store/uiStore';
 import { useTaskMutations } from '../hooks/useTasks';
-import { Plus, Calendar, Star } from 'lucide-react';
+import { Plus, Star } from 'lucide-react';
 import { cn } from '../lib/utils';
+import GlassDatePicker from './GlassDatePicker';
 
 const AddTaskInput: React.FC = () => {
   const { user } = useAuth();
@@ -15,30 +16,34 @@ const AddTaskInput: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [isStarred, setIsStarred] = useState(false);
 
-  const handleSubmit = async (e?: React.FormEvent) => {
+  const [dueDate, setDueDate] = useState<string | null>(null);
+
+  const handleSubmit = (e?: React.FormEvent) => {
     e?.preventDefault();
     if (!title.trim() || !user || loading) return;
 
     setLoading(true);
-    try {
-      await addTask({
-        userId: user.uid,
-        listId: selectedListId || 'inbox',
-        title: title.trim(),
-        description: '',
-        completed: false,
-        starred: isStarred,
-        dueDate: null,
-        order: Date.now(),
-      });
-      setTitle('');
-      setIsStarred(false);
-      setIsFocused(false);
-    } catch (err) {
+    
+    // Fire and forget: Firestore handles local caching and optimistic UI updates
+    addTask({
+      userId: user.uid,
+      listId: selectedListId || 'inbox',
+      title: title.trim(),
+      description: '',
+      completed: false,
+      starred: isStarred,
+      dueDate: dueDate,
+      order: Date.now(),
+    }).catch(err => {
       console.error("Error adding task", err);
-    } finally {
-      setLoading(false);
-    }
+    });
+
+    // Clear UI immediately so user can type the next task
+    setTitle('');
+    setDueDate(null);
+    setIsStarred(false);
+    setIsFocused(true);
+    setLoading(false);
   };
 
   return (
@@ -46,8 +51,8 @@ const AddTaskInput: React.FC = () => {
       <form 
         onSubmit={handleSubmit}
         className={cn(
-          "w-full max-w-2xl bg-card border shadow-2xl rounded-3xl transition-all duration-300 overflow-hidden pointer-events-auto",
-          isFocused ? 'ring-2 ring-primary/30 border-primary' : 'border-border/50'
+          "w-full max-w-2xl bg-[#1a1a1a]/95 backdrop-blur-md border border-white/20 shadow-[0px_20px_60px_rgba(0,0,0,0.6)] rounded-3xl transition-all duration-300 pointer-events-auto",
+          isFocused ? 'ring-2 ring-primary/30 border-primary' : ''
         )}
       >
         <div className="flex items-center gap-4 p-2 md:p-4">
@@ -57,7 +62,7 @@ const AddTaskInput: React.FC = () => {
           <input 
             type="text" 
             placeholder="Add a task"
-            className="flex-1 bg-transparent border-none py-2 text-[16px] focus:outline-none placeholder:text-muted-foreground/50 font-medium"
+            className="flex-1 bg-transparent border-none py-2 text-[18px] focus:outline-none placeholder:text-slate-500 font-light text-white"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             onFocus={() => setIsFocused(true)}
@@ -69,8 +74,8 @@ const AddTaskInput: React.FC = () => {
                 type="button"
                 onClick={() => setIsStarred(!isStarred)}
                 className={cn(
-                  "p-2.5 hover:bg-muted rounded-full transition-colors",
-                  isStarred ? "text-yellow-500" : "text-muted-foreground"
+                  "p-2.5 hover:bg-white/10 rounded-full transition-colors",
+                  isStarred ? "text-primary active-glow" : "text-slate-500"
                 )}
               >
                 <Star size={22} fill={isStarred ? "currentColor" : "none"} />
@@ -78,7 +83,7 @@ const AddTaskInput: React.FC = () => {
               <button 
                 type="submit"
                 disabled={!title.trim() || loading}
-                className="ml-2 bg-primary text-primary-foreground px-6 py-2.5 rounded-full text-sm font-bold hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg"
+                className="ml-2 bg-primary text-on-primary px-6 py-2.5 rounded-2xl text-sm font-bold hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg active:scale-95 relative z-[110]"
               >
                 Save
               </button>
@@ -87,11 +92,13 @@ const AddTaskInput: React.FC = () => {
         </div>
         
         {isFocused && (
-          <div className="px-16 pb-4 flex items-center gap-6 border-t border-border/30 pt-4 bg-muted/10">
-            <button type="button" className="flex items-center gap-2.5 text-xs font-bold text-muted-foreground hover:text-primary transition-colors uppercase tracking-widest">
-              <Calendar size={16} />
-              Add date/time
-            </button>
+          <div className="px-16 pb-4 flex items-center gap-6 border-t border-white/5 pt-4 bg-white/5">
+            <GlassDatePicker 
+              value={dueDate}
+              onChange={setDueDate}
+              label="Add date/time"
+              position="top"
+            />
           </div>
         )}
       </form>

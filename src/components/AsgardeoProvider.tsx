@@ -18,7 +18,7 @@ const AsgardeoProvider: React.FC<AsgardeoProviderProps> = ({ children }) => {
                 baseUrl: baseUrl,
                 signInRedirectURL: redirectURL, 
                 signOutRedirectURL: redirectURL,
-                scope: ["openid", "profile"]
+                scope: ["openid", "profile", "email"]
             }}
         >
             {children}

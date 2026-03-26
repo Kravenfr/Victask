@@ -1,29 +1,29 @@
 @import "tailwindcss";
 
 :root {
-  --background: 225 10% 8%; /* #121212 - Deep Dark Background */
-  --foreground: 210 20% 98%; /* #e8eaed - High Emphasis Text */
-  --card: 225 10% 12%; /* #1e1e1e - Surface/Card */
-  --card-foreground: 210 20% 98%;
-  --popover: 225 10% 14%; /* Slightly lighter for dropdowns */
-  --popover-foreground: 210 20% 98%;
-  --primary: 217 90% 75%; /* #8ab4f8 - Google Dark Blue */
-  --primary-foreground: 222.2 47.4% 11.2%;
-  --secondary: 225 10% 20%;
-  --secondary-foreground: 210 20% 98%;
-  --muted: 225 10% 18%; /* #3c4043 - Border/Muted Surface */
-  --muted-foreground: 215 10% 65%; /* #9aa0a6 - Medium Emphasis Text */
-  --accent: 217 90% 75%;
-  --accent-foreground: 222.2 47.4% 11.2%;
-  --destructive: 0 62.8% 50%;
-  --destructive-foreground: 210 40% 98%;
-  --border: 225 10% 25%; /* Visible but subtle dark border */
-  --input: 225 10% 20%;
-  --ring: 217 90% 75%;
-  --radius: 0.75rem;
+  /* Stitch Premium Color Palette */
+  --background: #0e0e0e;
+  --foreground: #ffffff;
+  --card: rgba(255, 255, 255, 0.03);
+  --card-foreground: #ffffff;
+  --popover: #1a1919;
+  --popover-foreground: #ffffff;
+  --primary: #3adffa;
+  --primary-foreground: #004b56;
+  --secondary: #10d2ff;
+  --secondary-foreground: #004253;
+  --muted: #262626;
+  --muted-foreground: #adaaaa;
+  --accent: #3adffa;
+  --accent-foreground: #004b56;
+  --destructive: #ff716c;
+  --destructive-foreground: #490006;
+  --border: rgba(255, 255, 255, 0.1);
+  --input: #131313;
+  --ring: #3adffa;
+  --radius: 1rem;
 }
 
-/* Force Dark Mode defaults since user requested a Dark Palette app */
 body {
   @apply bg-background text-foreground antialiased;
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
@@ -31,32 +31,25 @@ body {
 }
 
 @theme {
-  --color-border: hsl(var(--border));
-  --color-input: hsl(var(--input));
-  --color-ring: hsl(var(--ring));
-  --color-background: hsl(var(--background));
-  --color-foreground: hsl(var(--foreground));
-
-  --color-primary: hsl(var(--primary));
-  --color-primary-foreground: hsl(var(--primary-foreground));
-
-  --color-secondary: hsl(var(--secondary));
-  --color-secondary-foreground: hsl(var(--secondary-foreground));
-
-  --color-destructive: hsl(var(--destructive));
-  --color-destructive-foreground: hsl(var(--destructive-foreground));
-
-  --color-muted: hsl(var(--muted));
-  --color-muted-foreground: hsl(var(--muted-foreground));
-
-  --color-accent: hsl(var(--accent));
-  --color-accent-foreground: hsl(var(--accent-foreground));
-
-  --color-popover: hsl(var(--popover));
-  --color-popover-foreground: hsl(var(--popover-foreground));
-
-  --color-card: hsl(var(--card));
-  --color-card-foreground: hsl(var(--card-foreground));
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
 
   --radius-lg: var(--radius);
   --radius-md: calc(var(--radius) - 2px);
@@ -69,17 +62,36 @@ body {
   }
 }
 
-/* Google Tasks Circular Checkbox (Dark Version) */
+/* Liquid Glass Effects */
+.liquid-bg {
+  @apply fixed inset-0 -z-10 overflow-hidden;
+}
+
+.blob {
+  @apply absolute rounded-full opacity-30 blur-[120px];
+  width: 600px;
+  height: 600px;
+}
+
+.glass-card {
+  @apply bg-[#1a1a1a] backdrop-blur-sm border border-white/20 shadow-[0_20px_50px_rgba(0,0,0,0.5)];
+}
+
+.active-glow {
+  @apply shadow-[0_0_15px_rgba(58,223,250,0.2)];
+}
+
+/* Google Tasks Circular Checkbox (Design Updated) */
 .task-checkbox {
-  @apply h-6 w-6 rounded-full border-2 border-muted-foreground/40 flex items-center justify-center transition-all cursor-pointer hover:border-primary/60;
+  @apply h-6 w-6 rounded-full border-2 border-primary/40 flex items-center justify-center transition-all cursor-pointer hover:border-primary/60;
 }
 
 .task-checkbox.completed {
-  @apply bg-primary border-primary;
+  @apply bg-primary/20 border-primary;
 }
 
 .task-checkbox-inner {
-  @apply text-black opacity-0 transition-opacity;
+  @apply text-primary opacity-0 transition-opacity;
 }
 
 .task-checkbox.completed .task-checkbox-inner {
@@ -88,22 +100,21 @@ body {
 
 /* Custom Scrollbar for Dark Theme */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: transparent;
+  @apply bg-transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-muted rounded-full hover:bg-muted-foreground/30;
-}
-
-.scrollbar-hide::-webkit-scrollbar {
-  display: none;
+  @apply bg-white/10 rounded-full hover:bg-white/20 transition-colors;
 }
 
 .scrollbar-hide {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
 }

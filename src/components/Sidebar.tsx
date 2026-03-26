@@ -12,15 +12,13 @@ import {
   Menu
 } from 'lucide-react';
 import { cn } from '../lib/utils';
-import SettingsModal from './SettingsModal';
 
 const Sidebar: React.FC = () => {
-  const { sidebarOpen, setSidebarOpen, filter, setFilter, selectedListId, setSelectedListId } = useUIStore();
+  const { sidebarOpen, setSidebarOpen, filter, setFilter, selectedListId, setSelectedListId, setSettingsOpen } = useUIStore();
   const { user } = useAuth();
   const { lists } = useLists(user?.uid);
   const { addList } = useListMutations();
   const [newListTitle, setNewListTitle] = useState('');
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   const handleSetFilter = (newFilter: any) => {
     setFilter(newFilter);
@@ -57,7 +55,7 @@ const Sidebar: React.FC = () => {
       )}
 
       <aside className={cn(
-        "fixed md:sticky top-0 left-0 z-50 h-screen w-72 bg-card border-r border-border transition-transform duration-300 flex flex-col",
+        "fixed md:sticky top-0 left-0 z-50 h-screen w-72 bg-[#121212]/98 backdrop-blur-md border-r border-white/10 shadow-2xl transition-transform duration-300 flex flex-col",
         sidebarOpen ? "translate-x-0" : "-translate-x-full md:hidden"
       )}>
         <div className="p-4 flex items-center justify-between">
@@ -76,6 +74,17 @@ const Sidebar: React.FC = () => {
         </div>
 
         <nav className="flex-1 overflow-y-auto px-2 space-y-1 scrollbar-hide pb-6">
+          <button 
+            onClick={() => { setSelectedListId(null); setFilter('all'); }}
+            className={cn(
+              "w-full flex items-center gap-3 px-4 py-3 rounded-r-full text-[14px] font-medium transition-colors",
+              (filter === 'all' && !selectedListId) ? "bg-primary/10 text-primary" : "hover:bg-muted text-foreground"
+            )}
+          >
+            <Hash size={20} className={(filter === 'all' && !selectedListId) ? "text-primary" : "text-muted-foreground/50"} />
+            Tasks
+          </button>
+
           <button 
             onClick={() => handleSetFilter('starred')}
             className={cn(
@@ -119,7 +128,7 @@ const Sidebar: React.FC = () => {
 
         <div className="p-4 border-t border-border mt-auto flex flex-col gap-1">
           <button 
-            onClick={() => setIsSettingsOpen(true)}
+            onClick={() => setSettingsOpen(true)}
             className="flex items-center gap-3 px-4 py-3 text-[14px] hover:bg-muted rounded-r-full transition-colors text-foreground font-medium"
           >
             <Settings size={20} />
@@ -131,8 +140,6 @@ const Sidebar: React.FC = () => {
           </button>
         </div>
       </aside>
-
-      {isSettingsOpen && <SettingsModal onClose={() => setIsSettingsOpen(false)} />}
     </>
   );
 };

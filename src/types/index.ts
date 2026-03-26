@@ -28,4 +28,4 @@ export type Task = {
   createdAt: any;
 };
 
-export type FilterType = 'all' | 'starred';
+export type FilterType = 'all' | 'starred' | 'all-tasks';

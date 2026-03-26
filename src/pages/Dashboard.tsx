@@ -3,6 +3,7 @@ import Header from '../components/Header';
 import Sidebar from '../components/Sidebar';
 import AddTaskInput from '../components/AddTaskInput';
 import TaskDetail from '../components/TaskDetail';
+import SettingsModal from '../components/SettingsModal';
 import { useUIStore } from '../store/uiStore';
 import { useAuth } from '../hooks/useAuth';
 import { useTasks, useTaskMutations, useLists } from '../hooks/useTasks';
@@ -29,7 +30,7 @@ import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 
 const Dashboard: React.FC = () => {
   const { user } = useAuth();
-  const { filter, selectedListId } = useUIStore();
+  const { filter, selectedListId, settingsOpen, setSettingsOpen } = useUIStore();
   const { tasks: dbTasks, loading } = useTasks(user?.uid, selectedListId, filter);
   const { updateTask, deleteTask } = useTaskMutations();
   const { lists } = useLists(user?.uid);
@@ -221,12 +222,13 @@ const Dashboard: React.FC = () => {
         {selectedTask && (
           <TaskDetail 
             task={selectedTask}
-            lists={lists}
             onUpdate={(id, updates) => updateTask({ id, ...updates })}
             onDelete={deleteTask}
             onClose={() => setSelectedTask(null)}
           />
         )}
+
+        {settingsOpen && <SettingsModal onClose={() => setSettingsOpen(false)} />}
       </div>
     </div>
   );

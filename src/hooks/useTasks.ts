@@ -22,25 +22,39 @@ export function useTasks(userId: string | undefined, listId: string | null, filt
   useEffect(() => {
     if (!userId) return;
 
-    let q = query(
+    // Use a single simple filter to avoid composite index requirements
+    const q = query(
       collection(db, 'tasks'), 
-      where('userId', '==', userId),
-      orderBy('order', 'asc')
+      where('userId', '==', userId)
     );
 
-    if (filter === 'starred') {
-      q = query(q, where('starred', '==', true));
-    } else if (listId) {
-      q = query(q, where('listId', '==', listId));
-    }
-
     const unsubscribe = onSnapshot(q, (snapshot) => {
-      const tasksData = snapshot.docs.map(doc => ({
+      const allTasks = snapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
       })) as Task[];
       
-      setTasks(tasksData);
+      let filteredTasks = allTasks;
+
+      // Filter by starred if requested
+      if (filter === 'starred') {
+        filteredTasks = allTasks.filter(t => t.starred);
+      } 
+      // Filter by list unless "all-tasks" bypass or internal subtask fetch (which handles its own filtering)
+      else if (filter !== 'all-tasks') {
+        const currentListId = listId || 'inbox';
+        filteredTasks = allTasks.filter(t => 
+          t.listId === currentListId || (currentListId === 'inbox' && (!t.listId || t.listId === 'inbox'))
+        );
+      }
+      
+      // Sort in-memory
+      filteredTasks.sort((a, b) => (a.order || 0) - (b.order || 0));
+      
+      setTasks(filteredTasks);
+      setLoading(false);
+    }, (error) => {
+      console.error("Firestore error in useTasks:", error);
       setLoading(false);
     });
 
@@ -60,8 +74,7 @@ export function useLists(userId: string | undefined) {
 
     const q = query(
       collection(db, 'lists'), 
-      where('userId', '==', userId),
-      orderBy('createdAt', 'desc')
+      where('userId', '==', userId)
     );
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
@@ -69,7 +82,18 @@ export function useLists(userId: string | undefined) {
         id: doc.id,
         ...doc.data()
       })) as TaskList[];
+      
+      // Sort in-memory
+      listsData.sort((a, b) => {
+        const dateA = a.createdAt?.toMillis ? a.createdAt.toMillis() : 0;
+        const dateB = b.createdAt?.toMillis ? b.createdAt.toMillis() : 0;
+        return dateB - dateA; // Descending
+      });
+
       setLists(listsData);
+      setLoading(false);
+    }, (error) => {
+      console.error("Firestore error in useLists:", error);
       setLoading(false);
     });
 
